@@ -16,3 +16,10 @@ public class Tx
 
     public TxSide Side { get; set; }
 }
+
+public class TxOutOfOrder
+{
+    public int Id { get; set; }
+
+    public int TradeId { get; set; }
+}

@@ -90,6 +90,7 @@ public class PositionServiceImpl : IPositionService
                 txo => new { txo.Id, txo.TradeId },
                 t => new { t.Id, t.TradeId },
                 (txo, t) => new { tx = t, txo })
+            .OrderBy(x => x.tx.Version)
             .ToListAsync();
 
         if (outOfOrderTxs.Any() && tx.Action == TxAction.Insert)

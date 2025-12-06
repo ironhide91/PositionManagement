@@ -8,7 +8,7 @@ public class Tx
 
     public int Version { get; set; }
 
-    public string SecurityCode { get; set; } = string.Empty;
+    public string Security { get; set; } = string.Empty;
 
     public long Quantity { get; set; }
 

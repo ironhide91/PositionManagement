@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
 using PositionManagement.Service.Core;
 using PositionManagement.Service.Data;
 using PositionManagement.Service.Models;
@@ -42,7 +43,7 @@ public class PositionServiceImpl : IPositionService
         await dbContext.SaveChangesAsync();
 
         var position = await dbContext.Positions
-            .FirstOrDefaultAsync(p => p.SecurityCode.Equals(tx.SecurityCode));
+            .FirstOrDefaultAsync(p => p.SecurityCode.Equals(tx.Security));
 
         if (position == null)
         {
@@ -66,7 +67,7 @@ public class PositionServiceImpl : IPositionService
         await dbContext.Positions.AddAsync(new Position
         {
             TradeId = tx.TradeId,
-            SecurityCode = tx.SecurityCode,
+            SecurityCode = tx.Security,
             NetQuantity = quantity
         });
 

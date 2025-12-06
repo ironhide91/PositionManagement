@@ -19,7 +19,10 @@ namespace PositionManagement.Service
 
             builder.Services.AddSingleton<INetQuantityCalculator, NetQuantityCalculatorImpl>();
             builder.Services.AddScoped<IPositionService, PositionServiceImpl>();
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
 
             builder.Services.AddCors(options =>
             {

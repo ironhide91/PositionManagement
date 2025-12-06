@@ -1,0 +1,153 @@
+<div class="container">
+  <div class="header">
+    <h1>Position Management System</h1>
+    <div class="connection-status" 
+         [class.connected]="signalRService.isConnected()" 
+         [class.disconnected]="!signalRService.isConnected()">
+      {{ signalRService.isConnected() ? '● Connected' : '● Disconnected' }}
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Section 1: Positions -->
+    <div class="section positions-section">
+      <h2>Positions</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Security</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (position of signalRService.positions(); track position.security + position.quantity) {
+              <tr>
+                <td>{{ position.security }}</td>
+                <td>{{ position.quantity }}</td>
+                <td [class.positive]="position.quantity > 0" [class.negative]="position.quantity < 0">
+                  {{ position.quantity }}
+                </td>
+              </tr>
+            }
+            @if (signalRService.positions().length === 0) {
+              <tr>
+                <td colspan="3" class="no-data">No positions available</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 2: Transactions -->
+    <div class="section transactions-section">
+      <h2>Transactions</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Id</th>
+              <th>Ver</th>
+              <th>Security</th>
+              <th>Qty</th>
+              <th>Action</th>
+              <th>Side</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of signalRService.transactions(); track tx.id) {
+              <tr>
+                <td>{{ tx.id }}</td>
+                <td>{{ tx.tradeId }}</td>
+				<td>{{ tx.version }}</td>
+                <td>{{ tx.security }}</td>                
+                <td>{{ tx.quantity }}</td>
+                <td>{{ tx.action }}</td>
+                <td>{{ tx.side }}</td>
+                <td><span class="badge" [class]="'badge-' + tx.action.toLowerCase()">{{ tx.action }}</span></td>
+                <td class="action-buttons">
+                  <button class="btn btn-edit" (click)="editTransaction(tx)" [disabled]="!signalRService.isConnected()">Edit</button>
+                  <button class="btn btn-cancel" (click)="cancelTransaction(tx)" [disabled]="!signalRService.isConnected()">Cancel</button>
+                </td>
+              </tr>
+            }
+            @if (signalRService.transactions().length === 0) {
+              <tr>
+                <td colspan="6" class="no-data">No transactions available</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 3: Add/Modify Transaction -->
+    <div class="section form-section">
+      <h2>{{ editMode() ? 'Modify Transaction' : 'Add Transaction' }}</h2>
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="security">Security:</label>
+          <input 
+            type="text" 
+            id="security" 
+            [value]="txForm().security"
+            (input)="updateFormField('security', $any($event.target).value)"
+            name="account" 
+            placeholder="Enter Security"
+            [disabled]="!signalRService.isConnected()"
+            required
+          />
+        </div>        
+
+        <div class="form-group">
+          <label for="quantity">Quantity:</label>
+          <input 
+            type="number" 
+            id="quantity" 
+            [value]="txForm().quantity"
+            (input)="updateFormField('quantity', +$any($event.target).value)"
+            name="quantity" 
+            placeholder="Enter quantity"
+            [disabled]="!signalRService.isConnected()"
+            required
+          />
+        </div>
+		
+		<div class="form-group">
+          <label for="side">Side:</label>
+          <div class="toggle-group">
+            <button 
+              type="button"
+              class="toggle-btn"
+              [class.active]="txForm().quantity > 0"
+              (click)="setSide('BUY')"
+              [disabled]="!signalRService.isConnected()">
+              BUY
+            </button>
+            <button 
+              type="button"
+              class="toggle-btn"
+              [class.active]="txForm().quantity < 0"
+              (click)="setSide('SELL')"
+              [disabled]="!signalRService.isConnected()">
+              SELL
+            </button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!signalRService.isConnected()">
+            {{ editMode() ? 'Update' : 'Add' }} Transaction
+          </button>
+          @if (editMode()) {
+            <button type="button" class="btn btn-secondary" (click)="resetForm()">
+              Cancel Edit
+            </button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

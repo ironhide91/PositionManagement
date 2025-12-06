@@ -25,12 +25,12 @@ public class PositionServiceImplTests
         var sut = new PositionServiceImpl(dbContext, new NetQuantityCalculatorImpl());
         var txs = new[]
         {
-            new Tx { Id = 1, TradeId = 1, Version = 1, SecurityCode = "REL", Quantity = 50, Action = TxAction.Insert,  Side = TxSide.Buy  },
-            new Tx { Id = 2, TradeId = 2, Version = 1, SecurityCode = "ITC", Quantity = 40, Action = TxAction.Insert,  Side = TxSide.Sell },
-            new Tx { Id = 3, TradeId = 3, Version = 1, SecurityCode = "INF", Quantity = 70, Action = TxAction.Insert,  Side = TxSide.Buy  },
-            new Tx { Id = 4, TradeId = 1, Version = 2, SecurityCode = "REL", Quantity = 60, Action = TxAction.Update,  Side = TxSide.Buy  },
-            new Tx { Id = 5, TradeId = 2, Version = 2, SecurityCode = "ITC", Quantity = 30, Action = TxAction.Cancel,  Side = TxSide.Buy  },
-            new Tx { Id = 6, TradeId = 4, Version = 1, SecurityCode = "INF", Quantity = 20, Action = TxAction.Insert,  Side = TxSide.Sell },
+            new Tx { Id = 1, TradeId = 1, Version = 1, Security = "REL", Quantity = 50, Action = TxAction.Insert,  Side = TxSide.Buy  },
+            new Tx { Id = 2, TradeId = 2, Version = 1, Security = "ITC", Quantity = 40, Action = TxAction.Insert,  Side = TxSide.Sell },
+            new Tx { Id = 3, TradeId = 3, Version = 1, Security = "INF", Quantity = 70, Action = TxAction.Insert,  Side = TxSide.Buy  },
+            new Tx { Id = 4, TradeId = 1, Version = 2, Security = "REL", Quantity = 60, Action = TxAction.Update,  Side = TxSide.Buy  },
+            new Tx { Id = 5, TradeId = 2, Version = 2, Security = "ITC", Quantity = 30, Action = TxAction.Cancel,  Side = TxSide.Buy  },
+            new Tx { Id = 6, TradeId = 4, Version = 1, Security = "INF", Quantity = 20, Action = TxAction.Insert,  Side = TxSide.Sell },
         };
 
         // act
@@ -60,9 +60,9 @@ public class PositionServiceImplTests
         var sut = new PositionServiceImpl(dbContext, new NetQuantityCalculatorImpl());
         var txs = new[]
         {
-            new Tx { Id = 4, TradeId = 1, Version = 2, SecurityCode = "REL", Quantity = 20, Action = TxAction.Update,  Side = TxSide.Buy  },
-            new Tx { Id = 5, TradeId = 1, Version = 3, SecurityCode = "REL", Quantity = 90, Action = TxAction.Cancel,  Side = TxSide.Buy  },
-            new Tx { Id = 6, TradeId = 1, Version = 1, SecurityCode = "REL", Quantity = 20, Action = TxAction.Insert,  Side = TxSide.Buy },
+            new Tx { Id = 4, TradeId = 1, Version = 2, Security = "REL", Quantity = 20, Action = TxAction.Update,  Side = TxSide.Buy  },
+            new Tx { Id = 5, TradeId = 1, Version = 3, Security = "REL", Quantity = 90, Action = TxAction.Cancel,  Side = TxSide.Buy  },
+            new Tx { Id = 6, TradeId = 1, Version = 1, Security = "REL", Quantity = 20, Action = TxAction.Insert,  Side = TxSide.Buy },
         };
 
         // act

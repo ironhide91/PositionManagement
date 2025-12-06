@@ -28,7 +28,7 @@ public class TradingDbContext : DbContext
     {
         var tx = modelBuilder.Entity<Tx>();
         tx.HasKey(t => t.Id);
-        tx.HasIndex(t => new { t.Id, t.TradeId }).IsUnique();
+        tx.HasIndex(t => new { t.Id, t.TradeId, t.Version }).IsUnique();
         tx.Property(t => t.Id).ValueGeneratedOnAdd();
         tx.Property(t => t.TradeId).IsRequired();
         tx.Property(t => t.Version).IsRequired();

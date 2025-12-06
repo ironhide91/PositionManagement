@@ -22,7 +22,7 @@ public class NetQuantityCalculatorImpl : INetQuantityCalculator
             return position.NetQuantity + tx.Quantity;
         }
 
-        if (tx.Action == TxAction.Insert && tx.Side == TxSide.Buy)
+        if (tx.Action == TxAction.Insert && tx.Side == TxSide.Sell)
         {
             return position.NetQuantity - tx.Quantity;
         }

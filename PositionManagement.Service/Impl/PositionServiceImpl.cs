@@ -50,14 +50,8 @@ public class PositionServiceImpl : IPositionService
             return;
         }
 
-        if (tx.Action == TxAction.Cancel)
-        {
-            await Cancel(position);
-            return;
-        }
-
         await Update(position, tx);
-    }    
+    }
 
     private async Task Create(Tx tx)
     {
@@ -65,19 +59,26 @@ public class PositionServiceImpl : IPositionService
 
         if (tx.Action != TxAction.Insert)
         {
-            await dbContext.TxOutOfOrders.AddAsync(new TxOutOfOrder
-            {
-                Id = tx.Id,
-                TradeId = tx.TradeId
-            });
-
+            await OutOfOrder(tx);
             quantity = 0;
         }
 
         await dbContext.Positions.AddAsync(new Position
         {
+            TradeId = tx.TradeId,
             SecurityCode = tx.SecurityCode,
             NetQuantity = quantity
+        });
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task OutOfOrder(Tx tx)
+    {
+        await dbContext.TxOutOfOrders.AddAsync(new TxOutOfOrder
+        {
+            Id = tx.Id,
+            TradeId = tx.TradeId
         });
 
         await dbContext.SaveChangesAsync();
@@ -95,24 +96,23 @@ public class PositionServiceImpl : IPositionService
 
         if (outOfOrderTxs.Any() && tx.Action == TxAction.Insert)
         {
-            position.NetQuantity += outOfOrderTxs.Sum(x => netQuantityCalculator.Calculate(position, x.tx));
+            foreach (var item in outOfOrderTxs)
+            {
+                position.NetQuantity = netQuantityCalculator.Calculate(position, item.tx);
+            }
+
             dbContext.TxOutOfOrders.RemoveRange(outOfOrderTxs.Select(x => x.txo));
             await dbContext.SaveChangesAsync();
             return;
         }
 
-        if (outOfOrderTxs.Any() && tx.Action == TxAction.Update)
+        if (outOfOrderTxs.Any() && (tx.Action == TxAction.Update || tx.Action == TxAction.Cancel))
         {
+            await OutOfOrder(tx);
             return;
         }
 
         position.NetQuantity = netQuantityCalculator.Calculate(position, tx);
-        await dbContext.SaveChangesAsync();
-    }
-
-    private async Task Cancel(Position position)
-    {
-        position.NetQuantity = 0;
         await dbContext.SaveChangesAsync();
     }
 }

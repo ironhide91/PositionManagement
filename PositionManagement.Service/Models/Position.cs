@@ -2,7 +2,7 @@
 
 public class Position
 {
-    public string TradeId { get; set; } = string.Empty;
+    public int TradeId { get; set; }
 
     public string SecurityCode { get; set; } = string.Empty;
 

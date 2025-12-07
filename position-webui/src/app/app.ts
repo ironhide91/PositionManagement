@@ -29,11 +29,10 @@ export class App {
 
   constructor(protected signalRService: SignalRService) {}
   
-  protected setSide(side: 'BUY' | 'SELL'): void {
-    const currentQty = Math.abs(this.txForm().quantity) || 1;
+  protected setSide(side: 'Buy' | 'Sell'): void {
     this.txForm.update(form => ({ 
       ...form, 
-      quantity: side === 'BUY' ? currentQty : -currentQty 
+      side: side 
     }));
   }
 

@@ -21,7 +21,7 @@ public class PositionServiceImpl : IPositionService
     {
         var txs = await dbContext.Transactions
             .AsNoTracking()
-            .OrderBy(t => t.Id)
+            .OrderByDescending(t => t.Id)
             .ToListAsync();
 
         return txs;
@@ -31,7 +31,7 @@ public class PositionServiceImpl : IPositionService
     {
         var positions = await dbContext.Positions
             .AsNoTracking()
-            .OrderBy(t => t.SecurityCode)
+            .OrderByDescending(t => t.NetQuantity)
             .ToListAsync();
 
         return positions;
@@ -39,11 +39,13 @@ public class PositionServiceImpl : IPositionService
 
     public async Task Add(Tx tx)
     {
+        tx.Security = tx.Security.ToUpperInvariant();
+
         await dbContext.Transactions.AddAsync(tx);
         await dbContext.SaveChangesAsync();
 
         var position = await dbContext.Positions
-            .FirstOrDefaultAsync(p => p.SecurityCode.Equals(tx.Security));
+            .FirstOrDefaultAsync(p => p.Security.Equals(tx.Security));
 
         if (position == null)
         {
@@ -66,8 +68,7 @@ public class PositionServiceImpl : IPositionService
 
         await dbContext.Positions.AddAsync(new Position
         {
-            TradeId = tx.TradeId,
-            SecurityCode = tx.Security,
+            Security = tx.Security,
             NetQuantity = quantity
         });
 

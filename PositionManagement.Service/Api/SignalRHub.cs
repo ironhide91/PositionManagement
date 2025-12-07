@@ -49,6 +49,7 @@ public class SignalRHub : Hub
 
     public async Task CancelAsync(Tx tx)
     {
+        tx.Id = 0;
         tx.Action = TxAction.Cancel;
         await positionService.Add(tx);
 

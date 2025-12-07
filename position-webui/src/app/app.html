@@ -15,27 +15,29 @@
       <div class="table-container">
         <table>
           <thead>
-            <tr>
-              <th>Security</th>
-              <th>Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (position of signalRService.positions(); track position.security + position.quantity) {
-              <tr>
-                <td>{{ position.security }}</td>
-                <td>{{ position.quantity }}</td>
-                <td [class.positive]="position.quantity > 0" [class.negative]="position.quantity < 0">
-                  {{ position.quantity }}
-                </td>
-              </tr>
-            }
-            @if (signalRService.positions().length === 0) {
-              <tr>
-                <td colspan="3" class="no-data">No positions available</td>
-              </tr>
-            }
-          </tbody>
+			  <tr>
+				<th>Security</th>
+				<th>Quantity</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  @if (signalRService.positions().length === 0) {
+				<tr>
+				  <td colspan="2" class="no-data">No positions available</td>
+				</tr>
+			  } @else {
+				@for (position of signalRService.positions(); track position.security) {
+				  <tr>
+					<td>{{ position.security }}</td>
+					<td
+					  [class.positive]="position.netQuantity > 0"
+					  [class.negative]="position.netQuantity < 0">
+					  {{ position.netQuantity }}
+					</td>
+				  </tr>
+				}
+			  }
+			</tbody>
         </table>
       </div>
     </div>
@@ -121,18 +123,18 @@
             <button 
               type="button"
               class="toggle-btn"
-              [class.active]="txForm().quantity > 0"
-              (click)="setSide('BUY')"
+              [class.active]="txForm().side === 'Buy'"
+              (click)="setSide('Buy')"
               [disabled]="!signalRService.isConnected()">
-              BUY
+              Buy
             </button>
             <button 
               type="button"
               class="toggle-btn"
-              [class.active]="txForm().quantity < 0"
-              (click)="setSide('SELL')"
+              [class.active]="txForm().side === 'Sell'"
+              (click)="setSide('Sell')"
               [disabled]="!signalRService.isConnected()">
-              SELL
+              Sell
             </button>
           </div>
         </div>

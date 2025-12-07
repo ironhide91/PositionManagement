@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PositionManagement.Service.Api;
 using PositionManagement.Service.Core;
@@ -22,6 +23,9 @@ namespace PositionManagement.Service
             builder.Services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = true;
+            }).AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
             builder.Services.AddCors(options =>

@@ -40,7 +40,7 @@ public class TradingDbContext : DbContext
     private void ConfigurePosition(ModelBuilder modelBuilder)
     {
         var position = modelBuilder.Entity<Position>();
-        position.HasKey(t => t.SecurityCode);
+        position.HasKey(t => t.Security);
         position.Property(t => t.NetQuantity).IsRequired();
     }
 

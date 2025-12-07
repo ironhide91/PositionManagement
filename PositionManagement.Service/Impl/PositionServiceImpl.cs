@@ -17,16 +17,6 @@ public class PositionServiceImpl : IPositionService
         this.netQuantityCalculator = netQuantityCalculator;
     }
 
-    public async Task<IReadOnlyList<Tx>> GetTransactionsAsync()
-    {
-        var txs = await dbContext.Transactions
-            .AsNoTracking()
-            .OrderByDescending(t => t.Id)
-            .ToListAsync();
-
-        return txs;
-    }
-
     public async Task<IReadOnlyList<Position>> GetPositionsAsync()
     {
         var positions = await dbContext.Positions
@@ -37,10 +27,29 @@ public class PositionServiceImpl : IPositionService
         return positions;
     }
 
+    public async Task<IReadOnlyList<Trade>> GetTradesAsync()
+    {
+        var trades = await dbContext.Trades
+            .AsNoTracking()
+            .OrderBy(t => t.Security)
+            .ToListAsync();
+
+        return trades;
+    }
+
+    public async Task<IReadOnlyList<Tx>> GetTransactionsAsync()
+    {
+        var txs = await dbContext.Transactions
+            .AsNoTracking()
+            .OrderByDescending(t => t.Id)
+            .ToListAsync();
+
+        return txs;
+    }    
+
     public async Task Add(Tx tx)
     {
-        tx.Security = tx.Security.ToUpperInvariant();
-
+        await UpdateTrade(tx);
         await dbContext.Transactions.AddAsync(tx);
         await dbContext.SaveChangesAsync();
 
@@ -54,6 +63,35 @@ public class PositionServiceImpl : IPositionService
         }
 
         await Update(position, tx);
+    }
+
+    private async Task UpdateTrade(Tx tx)
+    {
+        tx.Security = tx.Security.ToUpperInvariant();
+
+        if (tx.Action == TxAction.Insert)
+        {
+            var row = await dbContext.Trades.AddAsync(new Trade
+            {
+                Security = tx.Security,
+                Side = tx.Side,
+                Quantity = tx.Quantity,
+                Version = 1
+            });
+
+            await dbContext.SaveChangesAsync();
+
+            tx.TradeId = row.Entity.Id;
+            tx.Version = row.Entity.Version;
+
+            return;
+        }
+
+        var trade = await dbContext.Trades.FirstAsync(t => t.Id == tx.TradeId);
+        tx.TradeId = trade.Id;
+        tx.Version = ++trade.Version;
+
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task Create(Tx tx)

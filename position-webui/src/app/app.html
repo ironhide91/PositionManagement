@@ -41,51 +41,42 @@
         </table>
       </div>
     </div>
-
-    <!-- Section 2: Transactions -->
-    <div class="section transactions-section">
-      <h2>Transactions</h2>
+	
+	<!-- Section 2: Tradess -->
+    <div class="section trades-section">
+      <h2>Trades</h2>
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Id</th>
-              <th>Ver</th>
+              <th>#</th>              
               <th>Security</th>
-              <th>Qty</th>
-              <th>Action</th>
               <th>Side</th>
+              <th>Qty</th>
+              <th>Ver</th>
             </tr>
           </thead>
           <tbody>
-            @for (tx of signalRService.transactions(); track tx.id) {
+            @for (t of signalRService.trades(); track t.id) {
               <tr>
-                <td>{{ tx.id }}</td>
-                <td>{{ tx.tradeId }}</td>
-				<td>{{ tx.version }}</td>
-                <td>{{ tx.security }}</td>                
-                <td>{{ tx.quantity }}</td>
-                <td>{{ tx.action }}</td>
-                <td>{{ tx.side }}</td>
-                <td><span class="badge" [class]="'badge-' + tx.action.toLowerCase()">{{ tx.action }}</span></td>
-                <td class="action-buttons">
-                  <button class="btn btn-edit" (click)="editTransaction(tx)" [disabled]="!signalRService.isConnected()">Edit</button>
-                  <button class="btn btn-cancel" (click)="cancelTransaction(tx)" [disabled]="!signalRService.isConnected()">Cancel</button>
-                </td>
+                <td>{{ t.id }}</td>
+                <td>{{ t.security }}</td>
+				<td>{{ t.side }}</td>
+                <td>{{ t.quantity }}</td>
+				<td>{{ t.version }}</td>			
               </tr>
             }
-            @if (signalRService.transactions().length === 0) {
+            @if (signalRService.trades().length === 0) {
               <tr>
-                <td colspan="6" class="no-data">No transactions available</td>
+                <td colspan="6" class="no-data">No trades available</td>
               </tr>
             }
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Section 3: Add/Modify Transaction -->
+	
+	<!-- Section 3: Add/Modify Transaction -->
     <div class="section form-section">
       <h2>{{ editMode() ? 'Modify Transaction' : 'Add Transaction' }}</h2>
       <form (ngSubmit)="onSubmit()">
@@ -151,5 +142,45 @@
         </div>
       </form>
     </div>
+
+    <!-- Section 4: Transactions -->
+    <div class="section transactions-section">
+      <h2>Transactions</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Id</th>
+              <th>Ver</th>
+              <th>Security</th>
+              <th>Qty</th>
+              <th>Action</th>
+              <th>Side</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of signalRService.transactions(); track tx.id) {
+              <tr>
+                <td>{{ tx.id }}</td>
+                <td>{{ tx.tradeId }}</td>
+				<td>{{ tx.version }}</td>
+                <td>{{ tx.security }}</td>                
+                <td>{{ tx.quantity }}</td>
+                <td><span class="badge" [class]="'badge-' + tx.action.toLowerCase()">{{ tx.action.toUpperCase() }}</span></td>
+                <td>{{ tx.side }}</td>
+              </tr>
+            }
+            @if (signalRService.transactions().length === 0) {
+              <tr>
+                <td colspan="6" class="no-data">No transactions available</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    
   </div>
 </div>

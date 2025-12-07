@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Transaction } from '../models/transaction.model';
 import { Position } from '../models/position.model';
+import { Trade } from '../models/trade.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class SignalRService {
   
   public transactions = signal<Transaction[]>([]);
   public positions = signal<Position[]>([]);
+  public trades = signal<Trade[]>([]);
   public isConnected = signal<boolean>(false);
 
   constructor() {
@@ -61,13 +63,18 @@ export class SignalRService {
     this.hubConnection.on('PositionsUpdated', (positions: Position[]) => {
       this.positions.set(positions);
     });
+	
+	this.hubConnection.on('TradesUpdated', (trades: Trade[]) => {
+      this.trades.set(trades);
+    });
   }
 
   private async loadInitialData(): Promise<void> {
     try {
       const [transactions, positions] = await Promise.all([
         this.hubConnection.invoke<Transaction[]>('GetTransactionsAsync'),
-        this.hubConnection.invoke<Position[]>('GetPositionsAsync')
+        this.hubConnection.invoke<Position[]>('GetPositionsAsync'),
+        this.hubConnection.invoke<Trade[]>('GetTradesAsync'),
       ]);
       this.transactions.set(transactions);
       this.positions.set(positions);

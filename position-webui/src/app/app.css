@@ -11,12 +11,6 @@
   min-height: 100vh;
 }
 
-.container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -50,22 +44,6 @@
   color: #721c24;
 }
 
-.main-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-}
-
-.section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  height: calc(100vh - 180px);
-  display: flex;
-  flex-direction: column;
-}
-
 .section h2 {
   margin-bottom: 20px;
   color: #333;
@@ -74,9 +52,41 @@
   padding-bottom: 10px;
 }
 
+/* Whole page container (optional) */
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Row that holds all 4 sections */
+.main-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;      /* keep everything in one line */
+  gap: 16px;
+  padding: 16px 0;
+  flex: 1;
+}
+
+/* Each card (Positions / Trades / Form / Transactions) */
+.section {
+  flex: 0 0 auto;    /* do NOT stretch; size only as needed */
+  display: flex;
+  flex-direction: column;
+  min-width: max-content;  /* expand only as much as content requires */
+}
+
+/* Tables scroll inside their own box instead of overflowing */
 .table-container {
   flex: 1;
   overflow-y: auto;
+}
+
+/* Make tables fit their column */
+.table-container table {
+  width: 100%;
+  table-layout: auto;
 }
 
 table {

@@ -13,14 +13,19 @@ public class SignalRHub : Hub
         this.positionService = positionService;
     }
 
-    public async Task<IReadOnlyList<Tx>> GetTransactionsAsync()
-    {
-        return await positionService.GetTransactionsAsync();
-    }
-
     public async Task<IReadOnlyList<Position>> GetPositionsAsync()
     {
         return await positionService.GetPositionsAsync();
+    }
+
+    public async Task<IReadOnlyList<Trade>> GetTradesAsync()
+    {
+        return await positionService.GetTradesAsync();
+    }
+
+    public async Task<IReadOnlyList<Tx>> GetTransactionsAsync()
+    {
+        return await positionService.GetTransactionsAsync();
     }    
 
     public async Task InsertAsync(Tx tx)
@@ -28,9 +33,11 @@ public class SignalRHub : Hub
         tx.Action = TxAction.Insert;
         await positionService.Add(tx);
 
+        var trades = await positionService.GetTradesAsync();
         var txs = await positionService.GetTransactionsAsync();
         var positions = await positionService.GetPositionsAsync();
 
+        await Clients.All.SendAsync("TradesUpdated", trades);
         await Clients.All.SendAsync("TransactionsUpdated", txs);
         await Clients.All.SendAsync("PositionsUpdated", positions);
     }
@@ -40,9 +47,11 @@ public class SignalRHub : Hub
         tx.Action = TxAction.Update;
         await positionService.Add(tx);
 
+        var trades = await positionService.GetTradesAsync();
         var txs = await positionService.GetTransactionsAsync();
         var positions = await positionService.GetPositionsAsync();
 
+        await Clients.All.SendAsync("TradesUpdated", trades);
         await Clients.All.SendAsync("TransactionsUpdated", txs);
         await Clients.All.SendAsync("PositionsUpdated", positions);
     }
@@ -53,9 +62,11 @@ public class SignalRHub : Hub
         tx.Action = TxAction.Cancel;
         await positionService.Add(tx);
 
+        var trades = await positionService.GetTradesAsync();
         var txs = await positionService.GetTransactionsAsync();
         var positions = await positionService.GetPositionsAsync();
 
+        await Clients.All.SendAsync("TradesUpdated", trades);
         await Clients.All.SendAsync("TransactionsUpdated", txs);
         await Clients.All.SendAsync("PositionsUpdated", positions);
     }

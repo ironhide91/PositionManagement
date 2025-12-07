@@ -12,6 +12,8 @@ public class TradingDbContext : DbContext
 
     public DbSet<Tx> Transactions => Set<Tx>();
 
+    public DbSet<Trade> Trades => Set<Trade>();
+
     public DbSet<Position> Positions => Set<Position>();
 
     public DbSet<TxOutOfOrder> TxOutOfOrders => Set<TxOutOfOrder>();
@@ -19,9 +21,20 @@ public class TradingDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        ConfigureTrade(modelBuilder);
         ConfigureTx(modelBuilder);
         ConfigurePosition(modelBuilder);
         ConfigureTxOutOfOrder(modelBuilder);
+    }
+
+    private void ConfigureTrade(ModelBuilder modelBuilder)
+    {
+        var trade = modelBuilder.Entity<Trade>();
+        trade.HasKey(t => t.Id);
+        trade.Property(t => t.Id).ValueGeneratedOnAdd();
+        trade.Property(t => t.Security).IsRequired();
+        trade.Property(t => t.Side).IsRequired();
+        trade.Property(t => t.Version).IsRequired();
     }
 
     private void ConfigureTx(ModelBuilder modelBuilder)
